@@ -87,7 +87,8 @@ public class AutaAction extends org.apache.struts.action.Action {
                 if (cena != 0) {
                     sql = sql + " CENA = " + cena + " AND ";
                 }
-                if (id == 0 && marka.isEmpty() && model.isEmpty() && rocznik != 0 && kolor.isEmpty() && cena != 0) {
+                if (id == 0 && marka.isEmpty() && model.isEmpty() && rocznik == 0 && kolor.isEmpty() && cena == 0) {
+                }else{
                     sql = sql.substring(0, sql.length() - 5);
                     statement.execute(sql);
                 }

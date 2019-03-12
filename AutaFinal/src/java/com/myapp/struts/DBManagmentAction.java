@@ -77,6 +77,7 @@ public class DBManagmentAction extends org.apache.struts.action.Action {
                         sql = sql + " TEL = '" + tel + "' AND ";
                     }
                     if (idAuta == 0 && dataW.isEmpty() && dataZ.isEmpty() && imie.isEmpty() && nazwisko.isEmpty() && tel.isEmpty()) {
+                    }else{
                     sql = sql.substring(0, sql.length()-5);
                     statement.execute(sql);
                     }
