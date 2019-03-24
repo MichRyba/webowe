@@ -3,6 +3,9 @@ package com.myapp.struts;
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
@@ -25,7 +28,8 @@ public class DBManagmentAction extends org.apache.struts.action.Action {
         String dataW = DBForm.getDataW();
         String dataZ = DBForm.getDataZ();
         int idAuta = DBForm.getIdAuta();
-
+        
+        int rowCount = 0;
         String connectionUrl = "jdbc:derby://localhost:1527/Auta";
         String userId = "DBadmin";
         String password = "123";
@@ -39,53 +43,37 @@ public class DBManagmentAction extends org.apache.struts.action.Action {
         Connection connection = null;
         Statement statement = null;
 
-        if (request.getParameter("Add") != null) {
-
+        
+        
+        
+        if (request.getParameter("Zmien") != null) {
+            
+            
             try {
                 connection = DriverManager.getConnection(connectionUrl, userId, password);
                 statement = connection.createStatement();
-                statement.execute("INSERT INTO REZERWACJE (ID_AUTA, DATA_WYPOZYCZENIA, DATA_ODDANIA, IMIE, NAZWISKO, TEL) VALUES (" + idAuta + ", '" + dataW + "', '" + dataZ + "', '" + imie + "', '" + nazwisko + "', '" + tel + "')");
+                statement.execute("UPDATE REZERWACJE SET OCZEKUJACY = false WHERE ID_REZERWACJI = " + request.getParameter("Zmien"));
                 connection.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        
             if (request.getParameter("Del") != null) {
 
                 try {
                     connection = DriverManager.getConnection(connectionUrl, userId, password);
                     statement = connection.createStatement();
 
-                    String sql = "DELETE FROM REZERWACJE WHERE ";
-                    
-                    if (idAuta != 0) {
-                        sql = sql + " ID_AUTA = " + idAuta + " AND ";
-                    }
-                    if (!dataW.isEmpty()) {
-                        sql = sql + " DATA_WYPOZYCZENIA = '" + dataW + "' AND ";
-                    }
-                    if (!dataZ.isEmpty()) {
-                        sql = sql + " DATA_ZWROTU = '" + dataZ + "' AND ";
-                    }
-                    if (!imie.isEmpty()) {
-                        sql = sql + " IMIE = '" + imie + "' AND ";
-                    }
-                    if (!nazwisko.isEmpty()) {
-                        sql = sql + " NAZWISKO = '" + nazwisko + "' AND ";
-                    }
-                    if (!tel.isEmpty()) {
-                        sql = sql + " TEL = '" + tel + "' AND ";
-                    }
-                    if (idAuta == 0 && dataW.isEmpty() && dataZ.isEmpty() && imie.isEmpty() && nazwisko.isEmpty() && tel.isEmpty()) {
-                    }else{
-                    sql = sql.substring(0, sql.length()-5);
+                    String sql = "DELETE FROM REZERWACJE WHERE ID_REZERWACJI = " + request.getParameter("Del");
                     statement.execute(sql);
-                    }
+                    
                     connection.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+            
             if (request.getParameter("Auta") != null) {
             return mapping.findForward(AUTA);
         }

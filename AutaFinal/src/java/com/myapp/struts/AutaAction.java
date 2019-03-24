@@ -8,6 +8,8 @@ package com.myapp.struts;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
@@ -30,13 +32,17 @@ public class AutaAction extends org.apache.struts.action.Action {
             throws Exception {
 
         AutaForm AForm = (AutaForm) form;
-        int id = AForm.getId();
         String marka = AForm.getMarka();
         String model = AForm.getModel();
         int rocznik = AForm.getRocznik();
         String kolor = AForm.getKolor();
         double cena = AForm.getCena();
-
+        
+        Pattern pLetters = Pattern.compile("[^a-z ]", Pattern.CASE_INSENSITIVE);
+        Pattern pInt = Pattern.compile("[^0-9 ]", Pattern.CASE_INSENSITIVE);
+        Pattern pDouble = Pattern.compile("\\\\d+\\\\.\\\\d+", Pattern.CASE_INSENSITIVE);
+        Matcher m;
+        
         String connectionUrl = "jdbc:derby://localhost:1527/Auta";
         String userId = "DBadmin";
         String password = "123";
@@ -51,47 +57,55 @@ public class AutaAction extends org.apache.struts.action.Action {
         Statement statement = null;
 
         if (request.getParameter("Add") != null) {
+            
+            m = pLetters.matcher(marka);
+            if (m.find()) {
+                AForm.setError("Wpisz poprawną markę");
+                return mapping.findForward(AUTAS);
+            } else {
 
-            try {
-                connection = DriverManager.getConnection(connectionUrl, userId, password);
-                statement = connection.createStatement();
-                statement.execute("INSERT INTO AUTAMODELE (ID, MARKA, MODEL, ROCZNIK, KOLOR, CENA) VALUES (" + id + ", '" + marka + "', '" + model + "', " + rocznik + ", '" + kolor + "', " + cena + ")");
-                connection.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            m = pLetters.matcher(model);
+            if (m.find()) {
+                AForm.setError("Wpisz poprawny model");
+                return mapping.findForward(AUTAS);
+            } else {
+                
+            m = pInt.matcher(Integer.toString(rocznik));
+            if (m.find() || rocznik==0) {
+                AForm.setError("Wpisz poprawny rok produkcji");
+                return mapping.findForward(AUTAS);
+            } else {
+            m = pLetters.matcher(kolor);    
+            if (m.find()) {
+                AForm.setError("Wpisz poprawny kolor");
+                return mapping.findForward(AUTAS);
+            } else {
+                
+            m = pDouble.matcher(Double.toString(cena));
+            if (m.find() || cena==0) {
+                AForm.setError("Wpisz poprawną cenę");
+                return mapping.findForward(AUTAS);
+            } else {    
+                
+                    try {
+                        connection = DriverManager.getConnection(connectionUrl, userId, password);
+                        statement = connection.createStatement();
+                        statement.execute("INSERT INTO AUTAMODELE (MARKA, MODEL, ROCZNIK, KOLOR, CENA) VALUES ('" + marka + "', '" + model + "', " + rocznik + ", '" + kolor + "', " + cena + ")");
+                        connection.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }}}}}
         }
+        
         if (request.getParameter("Del") != null) {
 
             try {
                 connection = DriverManager.getConnection(connectionUrl, userId, password);
                 statement = connection.createStatement();
+                String sql = "DELETE FROM AUTAMODELE WHERE ID = " + request.getParameter("Del");
+                statement.execute(sql);
 
-                String sql = "DELETE FROM AUTAMODELE WHERE ";
-
-                if (id != 0) {
-                    sql = sql + " ID = " + id + " AND ";
-                }
-                if (!marka.isEmpty()) {
-                    sql = sql + " MARKA = '" + marka + "' AND ";
-                }
-                if (!model.isEmpty()) {
-                    sql = sql + " MODEL = '" + model + "' AND ";
-                }
-                if (rocznik != 0) {
-                    sql = sql + " ROCZNIK = " + rocznik + " AND ";
-                }
-                if (!kolor.isEmpty()) {
-                    sql = sql + " KOLOR = '" + kolor + "' AND ";
-                }
-                if (cena != 0) {
-                    sql = sql + " CENA = " + cena + " AND ";
-                }
-                if (id == 0 && marka.isEmpty() && model.isEmpty() && rocznik == 0 && kolor.isEmpty() && cena == 0) {
-                }else{
-                    sql = sql.substring(0, sql.length() - 5);
-                    statement.execute(sql);
-                }
                 connection.close();
             } catch (Exception e) {
                 e.printStackTrace();

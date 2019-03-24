@@ -23,6 +23,15 @@ public class AutaForm extends org.apache.struts.action.ActionForm {
     private int rocznik;
     private String kolor;
     private double cena;
+    private String error;
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = "<span style='color:red'>" + error + "</span>";
+    }
 
     public int getId() {
         return id;

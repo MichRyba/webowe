@@ -7,6 +7,8 @@
 
 <struts-config>
     <form-beans>
+        <form-bean name="reserveForm" type="com.myapp.struts.reserveForm"/>
+        <form-bean name="indexForm" type="com.myapp.struts.indexForm"/>
         <form-bean name="AutaForm" type="com.myapp.struts.AutaForm"/>
         <form-bean name="UsunForm" type="com.myapp.struts.UsunForm"/>
         <form-bean name="DBManagmentForm" type="com.myapp.struts.DBManagmentForm"/>
@@ -34,6 +36,9 @@
         <action name="AutaForm" path="/AutaInfo" scope="request" type="com.myapp.struts.AutaAction" validate="false">
             <forward name="autas" path="/AutaInfo.jsp"/>
             <forward name="rezerwacje" path="/success.jsp"/>
+        </action>
+        <action name="reserveForm" path="/reserve" scope="request" type="com.myapp.struts.reserveAction" validate="false">
+            <forward name="success" path="/reserve.jsp"/>
         </action>
         <action path="/Welcome" forward="/welcomeStruts.jsp"/>
     </action-mappings>

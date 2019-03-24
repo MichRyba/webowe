@@ -23,7 +23,16 @@ public class DBManagmentForm extends org.apache.struts.action.ActionForm {
     private String dataW;
     private String dataZ;
     private String tel;
+    private String idDel;
 
+    public String getIdDel() {
+        return idDel;
+    }
+
+    public void setIdDel(String idDel) {
+        this.idDel = idDel;
+    }
+    
     public String getNazwisko() {
         return nazwisko;
     }

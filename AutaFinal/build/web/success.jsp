@@ -25,12 +25,12 @@
 %>
 <html>
     <title>Rezerwacje</title>
-    <body>
+    <body bgcolor="#fffff0">
         <html:form action="/success">
             <h2 align="center"><font><strong>Rezerwacje</strong></font></h2>
-            <h3 align="center"> <html:submit value="Auta" property="Auta" /></h3>
-            <table align="center" cellpadding="5" cellspacing="5" border="1">
-
+            <h3 align="center"> <html:submit value="Samochody" property="Auta" /></h3>
+            <table align="center" cellpadding="5" cellspacing="5" border="0">
+                <h3 align="center"><font>Aktualne</font></h3>
                 <tr bgcolor="#c5e7e0">
                     <td><b>ID Samochodu</b></td>
                     <td><b>Data Wyporzyczenia</b></td>
@@ -38,6 +38,7 @@
                     <td><b>Imię</b></td>
                     <td><b>Nazwisko</b></td>
                     <td><b>Nr telefonu</b></td>
+                    <td bgcolor="#fffff0"><b>Usuń</b></td>
                 </tr>
 
                 <%
@@ -45,36 +46,88 @@
 
                         connection = DriverManager.getConnection(connectionUrl, userId, password);
                         statement = connection.createStatement();
-                        resultSet = statement.executeQuery("SELECT * FROM REZERWACJE ORDER BY DATA_ODDANIA");
-
+                        resultSet = statement.executeQuery("SELECT * FROM REZERWACJE ORDER BY 'DATA_ODDANIA'");
                         while (resultSet.next()) {
-                            if (resultSet.getDate("DATA_ODDANIA").after(date)) {
+                            if (resultSet.getDate("DATA_ODDANIA").after(date) && resultSet.getBoolean("OCZEKUJACY") == false) {
                 %>
-                <tr bgcolor="#c5e7e0">
+                <tr bgcolor="#eeeeee">
                     <td align="right"><%=resultSet.getString("ID_AUTA")%></td>
                     <td><%=resultSet.getString("DATA_WYPOZYCZENIA")%></td>
                     <td><%=resultSet.getString("DATA_ODDANIA")%></td>
                     <td><%=resultSet.getString("IMIE")%></td>
                     <td><%=resultSet.getString("NAZWISKO")%></td>
                     <td><%=resultSet.getString("TEL")%></td>
+                    <td bgcolor="#fffff0"><html:submit value='<%=resultSet.getString("ID_REZERWACJI")%>' property="Del" /></td>
                 </tr>
 
                 <%
                         }
                     }
-                    resultSet = statement.executeQuery("SELECT * FROM REZERWACJE ORDER BY DATA_ODDANIA");
-
-                    while (resultSet.next()) {
-                        if (!resultSet.getDate("DATA_ODDANIA").after(date)) {
                 %>
-                <tr bgcolor="#ff0099">
+            </table>
+            <table  align="center"  cellpadding="5" cellspacing="5" border="0">
+                <h3 align="center"><font>Oczekjuące</font></h3>
+                <tr bgcolor="#c5e7e0">
+                    <td><b>ID Samochodu</b></td>
+                    <td><b>Data Wyporzyczenia</b></td>
+                    <td><b>Data Zwrotu</b></td>
+                    <td><b>Imię</b></td>
+                    <td><b>Nazwisko</b></td>
+                    <td><b>Nr telefonu</b></td>
+                    <td bgcolor="#fffff0"><b>Zatwierdź</b></td>
+                    <td bgcolor="#fffff0"><b>Usuń</b></td>
+                </tr>
+                <%
+                    resultSet = statement.executeQuery("SELECT * FROM REZERWACJE ORDER BY 'DATA_ODDANIA'");
+                    while (resultSet.next()) {
+                        if (resultSet.getDate("DATA_ODDANIA").after(date) && resultSet.getBoolean("OCZEKUJACY") == true) {
+                %>
+
+                <tr bgcolor="#eeeeee">
                     <td align="right"><%=resultSet.getString("ID_AUTA")%></td>
                     <td><%=resultSet.getString("DATA_WYPOZYCZENIA")%></td>
                     <td><%=resultSet.getString("DATA_ODDANIA")%></td>
                     <td><%=resultSet.getString("IMIE")%></td>
                     <td><%=resultSet.getString("NAZWISKO")%></td>
                     <td><%=resultSet.getString("TEL")%></td>
+                    <td bgcolor="#fffff0"><html:submit value='<%=resultSet.getString("ID_REZERWACJI")%>' property="Zmien" /></td>
+                    <td bgcolor="#fffff0"><html:submit value='<%=resultSet.getString("ID_REZERWACJI")%>' property="Del" /></td>
                 </tr>
+
+                <%
+                        }
+                    }
+                %>
+            </table>
+            <table align="center" cellpadding="5" cellspacing="5" border="0">
+                <h3 align="center"><font>Zarchiwizowane</font></h3>
+                <tr bgcolor="#c5e7e0">
+                    <td><b>ID Samochodu</b></td>
+                    <td><b>Data Wyporzyczenia</b></td>
+                    <td><b>Data Zwrotu</b></td>
+                    <td><b>Imię</b></td>
+                    <td><b>Nazwisko</b></td>
+                    <td><b>Nr telefonu</b></td>
+                    <td bgcolor="#fffff0"><b>Usuń</b></td>
+                </tr>
+
+                <%
+                    resultSet = statement.executeQuery("SELECT * FROM REZERWACJE ORDER BY 'DATA_ODDANIA'");
+                    while (resultSet.next()) {
+                        if (!resultSet.getDate("DATA_ODDANIA").after(date)) {
+                %>
+
+                <tr bgcolor="#eeeeee">
+                    <td align="right"><%=resultSet.getString("ID_AUTA")%></td>
+                    <td><%=resultSet.getString("DATA_WYPOZYCZENIA")%></td>
+                    <td><%=resultSet.getString("DATA_ODDANIA")%></td>
+                    <td><%=resultSet.getString("IMIE")%></td>
+                    <td><%=resultSet.getString("NAZWISKO")%></td>
+                    <td><%=resultSet.getString("TEL")%></td>
+                    <td bgcolor="#fffff0"><html:submit value='<%=resultSet.getString("ID_REZERWACJI")%>' property="Del" /></td>
+                </tr>
+
+
 
                 <%
                             }
@@ -87,22 +140,6 @@
 
                     }
                 %>
-
-
-                <tr bgcolor="#ffffff">
-                    <td><html:text property="idAuta" /></td>
-                    <td><html:text property="dataW" /></td>
-                    <td><html:text property="dataZ" /></td>
-                    <td><html:text property="imie" /></td>
-                    <td><html:text property="nazwisko" /></td>
-                    <td><html:text property="tel" /></td>
-                    <td><html:submit value="Dodaj" property="Add" /></td>
-                    <td><html:submit value="Usuń" property="Del" /></td>
-                </tr>
-
-
-
-
 
             </table>
         </html:form>
