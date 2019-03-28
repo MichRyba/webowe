@@ -48,9 +48,9 @@
 
                 <tr bgcolor="#5ffff5">
                     <td><%=resultSet.getString("MARKA")%> <%=resultSet.getString("MODEL")%></td>
-                    <td>Rok: <%=resultSet.getString("ROCZNIK")%></td>
-                    <td>Kolor: <%=resultSet.getString("KOLOR")%></td>
-                    <td>Cena: <%=resultSet.getString("CENA")%></td>
+                    <td><%=resultSet.getString("ROCZNIK")%></td>
+                    <td><%=resultSet.getString("KOLOR")%></td>
+                    <td><%=resultSet.getString("CENA")%></td>
                     <td><html:submit value='<%=resultSet.getString("ID")%>' property="Reg" /></td>
                 </tr>
                 <%
